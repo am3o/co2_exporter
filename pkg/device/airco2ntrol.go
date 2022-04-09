@@ -27,7 +27,7 @@ func NewAirController() AirController {
 }
 
 func (ac *AirController) Open(path string) error {
-	device, err := os.OpenFile(path, os.O_APPEND|os.O_RDWR, 0)
+	device, err := os.OpenFile(path, os.O_APPEND|os.O_RDONLY, 0)
 	if err != nil {
 		return fmt.Errorf("could not open file: %w", err)
 	}
