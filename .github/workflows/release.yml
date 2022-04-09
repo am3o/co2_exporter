@@ -3,10 +3,12 @@ name: Release
 on:
   push:
     branches:
-      - "*"
+      - main
     tags:
       - v*
-
+permissions:
+  contents: read
+  
 jobs:
   test:
     runs-on: ubuntu-latest
@@ -20,7 +22,8 @@ jobs:
       - name: ${{ matrix.step }}
         run: make ${{ matrix.step }}
 
-  lint:
+  golangci:
+    name: lint
     runs-on: ubuntu-latest
     steps:
       - uses: actions/setup-go@v2
@@ -34,7 +37,7 @@ jobs:
     runs-on: ubuntu-latest
     needs:
       - test
-      - lint
+      - golangci
     steps:
       - name: Checkout repository code
         uses: actions/checkout@v2
