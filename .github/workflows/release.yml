@@ -8,7 +8,7 @@ on:
       - v*
 permissions:
   contents: read
-  
+
 jobs:
   test:
     runs-on: ubuntu-latest
@@ -25,6 +25,7 @@ jobs:
   golangci:
     name: lint
     runs-on: ubuntu-latest
+    continue-on-error: true
     steps:
       - uses: actions/setup-go@v2
       - uses: actions/checkout@v2
