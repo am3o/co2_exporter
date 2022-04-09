@@ -31,7 +31,8 @@ func main() {
 	defer airController.Close()
 
 	go func() {
-		for range time.NewTicker(5 * time.Second).C {
+		ticker := time.NewTicker(5 * time.Second)
+		for ; ; <-ticker.C {
 			carbonDioxide, temperature, humidity, err := airController.Read()
 			if err != nil {
 				logger.Error("faulty measurement", zap.Error(err))
