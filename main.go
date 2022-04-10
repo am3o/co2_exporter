@@ -7,14 +7,16 @@ import (
 	"github.com/prometheus/client_golang/prometheus/promhttp"
 	"go.uber.org/zap"
 	"net/http"
+	"os"
 	"time"
 )
 
-const (
-	DevicePath = "/dev/hidraw0"
-)
-
 func main() {
+	DevicePath, exists := os.LookupEnv("CO2MOINITOR_DEVICE")
+	if !exists {
+		DevicePath = "/dev/hidraw0"
+	}
+
 	logger, err := zap.NewProduction()
 	if err != nil {
 		panic(err)
