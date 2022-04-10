@@ -58,7 +58,7 @@ func (c *Collector) SetTemperatureInCelsius(value float64) {
 		return
 	}
 
-	c.TemperatureGauge.With(prometheus.Labels{labelUnit: "celcius"}).Set(value)
+	c.TemperatureGauge.With(prometheus.Labels{labelUnit: "celsius"}).Set(value)
 }
 
 func (c *Collector) SetHumidityInPercent(value float64) {
