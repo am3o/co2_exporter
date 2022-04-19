@@ -3,7 +3,7 @@ package device
 import (
 	"errors"
 	"fmt"
-	"github.com/Am3o/co2_exporter/pkg/model"
+	"github.com/netzaffe/co2_exporter/pkg/model"
 	"os"
 	"syscall"
 	"unsafe"

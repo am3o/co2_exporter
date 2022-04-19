@@ -1,8 +1,8 @@
 package main
 
 import (
-	"github.com/Am3o/co2_exporter/pkg/collector"
-	"github.com/Am3o/co2_exporter/pkg/device"
+	"github.com/netzaffe/co2_exporter/pkg/collector"
+	"github.com/netzaffe/co2_exporter/pkg/device"
 	"github.com/prometheus/client_golang/prometheus"
 	"github.com/prometheus/client_golang/prometheus/promhttp"
 	"go.uber.org/zap"
@@ -22,8 +22,8 @@ func main() {
 		panic(err)
 	}
 
-	collector := collector.New()
-	prometheus.MustRegister(collector)
+	register := collector.New()
+	prometheus.MustRegister(register)
 
 	var airController device.AirController
 	if err := airController.Open(DevicePath); err != nil {
@@ -41,9 +41,9 @@ func main() {
 				continue
 			}
 
-			collector.SetCarbonDioxideInPPM(carbonDioxide)
-			collector.SetTemperatureInCelsius(temperature)
-			collector.SetHumidityInPercent(humidity)
+			register.SetCarbonDioxideInPPM(carbonDioxide)
+			register.SetTemperatureInCelsius(temperature)
+			register.SetHumidityInPercent(humidity)
 			logger.Info("successfully measurement",
 				zap.Float64("carbon_dioxide", carbonDioxide),
 				zap.Float64("temperature", temperature),
