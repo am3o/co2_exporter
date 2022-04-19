@@ -5,8 +5,6 @@ import (
 	"fmt"
 	"github.com/netzaffe/co2_exporter/pkg/model"
 	"os"
-	"syscall"
-	"unsafe"
 )
 
 const (
@@ -16,26 +14,13 @@ const (
 )
 
 type AirController struct {
-	flag   [9]byte
 	device *os.File
-}
-
-func NewAirController() AirController {
-	return AirController{
-		flag: [9]byte{0x0, 0xc4, 0xc6, 0xc0, 0x92, 0x40, 0x23, 0xdc, 0x96},
-	}
 }
 
 func (ac *AirController) Open(path string) error {
 	device, err := os.OpenFile(path, os.O_APPEND|os.O_RDONLY, 0)
 	if err != nil {
 		return fmt.Errorf("could not open file: %w", err)
-	}
-
-	hidiocsFeature := int64(0xC0094806)
-	_, _, ep := syscall.Syscall(syscall.SYS_IOCTL, device.Fd(), uintptr(hidiocsFeature), uintptr(unsafe.Pointer(&ac.flag)))
-	if ep != 0 {
-		return device.Close()
 	}
 
 	ac.device = device
