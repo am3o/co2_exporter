@@ -1,5 +1,7 @@
 # co2 exporter
 
+[![Go Report Card](https://goreportcard.com/badge/github.com/netzaffe/co2_exporter)](https://goreportcard.com/report/github.com/netzaffe/co2_exporter)
+
 The exporter provides functionality to export values from USB CO₂ monitor:
 
 * [AIRCO2NTROL COACH](https://www.tfa-dostmann.de/produkt/co2-monitor-airco2ntrol-coach-31-5009/)
