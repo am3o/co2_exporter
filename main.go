@@ -1,8 +1,8 @@
 package main
 
 import (
-	"github.com/netzaffe/co2_exporter/pkg/collector"
-	"github.com/netzaffe/co2_exporter/pkg/device"
+	"github.com/am3o/co2_exporter/pkg/collector"
+	"github.com/am3o/co2_exporter/pkg/device"
 	"github.com/prometheus/client_golang/prometheus"
 	"github.com/prometheus/client_golang/prometheus/promhttp"
 	"go.uber.org/zap"

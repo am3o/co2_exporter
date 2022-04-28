@@ -3,7 +3,7 @@ package device
 import (
 	"errors"
 	"fmt"
-	"github.com/netzaffe/co2_exporter/pkg/model"
+	"github.com/am3o/co2_exporter/pkg/model"
 	"os"
 )
 

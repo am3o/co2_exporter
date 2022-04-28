@@ -1,4 +1,4 @@
-module github.com/netzaffe/co2_exporter
+module github.com/am3o/co2_exporter
 
 go 1.16
 
