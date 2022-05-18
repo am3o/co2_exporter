@@ -30,10 +30,15 @@ func main() {
 		logger.Error("could not open device stream", zap.Error(err))
 		panic(err)
 	}
-	defer airController.Close()
+	defer func() {
+		if err := airController.Close(); err != nil {
+			logger.Error("could not close the device connection", zap.Error(err))
+		}
+		logger.Info("successfully closed connection to device")
+	}()
 
 	go func() {
-		ticker := time.NewTicker(5 * time.Second)
+		ticker := time.NewTicker(10 * time.Second)
 		for ; ; <-ticker.C {
 			carbonDioxide, temperature, humidity, err := airController.Read()
 			if err != nil {
