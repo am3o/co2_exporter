@@ -5,12 +5,20 @@ import (
 	"fmt"
 	"github.com/am3o/co2_exporter/pkg/model"
 	"os"
+	"syscall"
+	"unsafe"
 )
 
 const (
 	OperationCarbonDioxide = 'P'
 	OperationTemperature   = 'B'
 	OperationHumidity      = 'A'
+
+	enableHidiocsFeature9 = 0xC0094806
+)
+
+var (
+	enableReportCode = unsafe.Pointer(&[9]byte{0x0, 0xc4, 0xc6, 0xc0, 0x92, 0x40, 0x23, 0xdc, 0x96})
 )
 
 type AirController struct {
@@ -21,6 +29,11 @@ func (ac *AirController) Open(path string) error {
 	device, err := os.OpenFile(path, os.O_APPEND|os.O_RDONLY, 0)
 	if err != nil {
 		return fmt.Errorf("could not open file: %w", err)
+	}
+
+	_, _, ep := syscall.Syscall(syscall.SYS_IOCTL, device.Fd(), uintptr(enableHidiocsFeature9), uintptr(enableReportCode))
+	if ep != 0 {
+		return fmt.Errorf("could not enable device to stream values: %w", device.Close())
 	}
 
 	ac.device = device

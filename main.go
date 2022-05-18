@@ -57,6 +57,7 @@ func main() {
 	}()
 
 	http.Handle("/internal/metrics", promhttp.Handler())
+	logger.Info("start exporter", zap.Int("port", 8080))
 	if err := http.ListenAndServe(":8080", nil); err != nil {
 		logger.Error("could not start http service", zap.Error(err))
 		panic(err)
