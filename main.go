@@ -1,14 +1,15 @@
 package main
 
 import (
+	"net/http"
+	"os"
+	"time"
+
 	"github.com/am3o/co2_exporter/pkg/collector"
 	"github.com/am3o/co2_exporter/pkg/device"
 	"github.com/prometheus/client_golang/prometheus"
 	"github.com/prometheus/client_golang/prometheus/promhttp"
 	"go.uber.org/zap"
-	"net/http"
-	"os"
-	"time"
 )
 
 func main() {
@@ -25,14 +26,14 @@ func main() {
 	register := collector.New()
 	prometheus.MustRegister(register)
 
-	var airController device.AirController
+	airController := device.New()
 	if err := airController.Open(DevicePath); err != nil {
-		logger.Error("could not open device stream", zap.Error(err))
-		panic(err)
+		logger.Fatal("could not open device stream", zap.Error(err))
 	}
+
 	defer func() {
 		if err := airController.Close(); err != nil {
-			logger.Error("could not close the device connection", zap.Error(err))
+			logger.Fatal("could not close the device connection", zap.Error(err))
 		}
 		logger.Info("successfully closed connection to device")
 	}()
@@ -59,7 +60,6 @@ func main() {
 	http.Handle("/internal/metrics", promhttp.Handler())
 	logger.Info("start exporter", zap.Int("port", 8080))
 	if err := http.ListenAndServe(":8080", nil); err != nil {
-		logger.Error("could not start http service", zap.Error(err))
-		panic(err)
+		logger.Fatal("could not start http service", zap.Error(err))
 	}
 }

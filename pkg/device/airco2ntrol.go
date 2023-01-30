@@ -3,10 +3,11 @@ package device
 import (
 	"errors"
 	"fmt"
-	"github.com/am3o/co2_exporter/pkg/model"
 	"os"
 	"syscall"
 	"unsafe"
+
+	"github.com/am3o/co2_exporter/pkg/model"
 )
 
 const (
@@ -17,12 +18,15 @@ const (
 	enableHidiocsFeature9 = 0xC0094806
 )
 
-var (
-	enableReportCode = unsafe.Pointer(&[9]byte{0x0, 0xc4, 0xc6, 0xc0, 0x92, 0x40, 0x23, 0xdc, 0x96})
-)
-
 type AirController struct {
-	device *os.File
+	device           *os.File
+	enableReportCode unsafe.ArbitraryType
+}
+
+func New() AirController {
+	return AirController{
+		enableReportCode: *unsafe.Pointer(&[9]byte{0x0, 0xc4, 0xc6, 0xc0, 0x92, 0x40, 0x23, 0xdc, 0x96}),
+	}
 }
 
 func (ac *AirController) Open(path string) error {
@@ -31,7 +35,7 @@ func (ac *AirController) Open(path string) error {
 		return fmt.Errorf("could not open file: %w", err)
 	}
 
-	_, _, ep := syscall.Syscall(syscall.SYS_IOCTL, device.Fd(), uintptr(enableHidiocsFeature9), uintptr(enableReportCode))
+	_, _, ep := syscall.Syscall(syscall.SYS_IOCTL, device.Fd(), uintptr(enableHidiocsFeature9), uintptr(ac.enableReportCode))
 	if ep != 0 {
 		return fmt.Errorf("could not enable device to stream values: %w", device.Close())
 	}
