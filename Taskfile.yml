@@ -1,0 +1,29 @@
+version: '3'
+
+tasks:
+  build:
+    silent: true
+    deps:
+      - clean
+    cmds:
+      - go build .
+
+  lint:
+    preconditions:
+      - go install github.com/golangci/golangci-lint/cmd/golangci-lint@v1.44.2
+    cmds:
+      - golangci-lint run ./...
+
+  vet:
+    silent: true
+    cmds:
+      - go vet ./...
+
+  test:
+    cmds:
+      - go test -v -race -shuffle=on ./...
+
+  clean:
+    silent: true
+    cmds:
+      - rm -f tasmota_exporter
