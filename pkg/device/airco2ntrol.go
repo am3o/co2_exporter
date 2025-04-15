@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"io"
 	"os"
 	"syscall"
 	"unsafe"
@@ -20,7 +21,7 @@ const (
 )
 
 type AirController struct {
-	device           *os.File
+	device           io.ReadCloser
 	enableReportCode [9]byte
 }
 
