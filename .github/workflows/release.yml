@@ -13,7 +13,7 @@ permissions:
 env:
   # Common versions
   GO_VERSION: "1.24"
-  GOLANGCI_VERSION: "v1.38"
+  GOLANGCI_VERSION: "v2.0"
   STATICCHECK_VERSION: "2025.1"
 
 jobs:
@@ -42,7 +42,7 @@ jobs:
           go-version: ${{ env.GO_VERSION }}
       - uses: actions/checkout@v3
       - name: golangci-lint
-        uses: golangci/golangci-lint-action@v3
+        uses: golangci/golangci-lint-action@v7
         with:
           version: ${{ env.GOLANGCI_VERSION }}
 
