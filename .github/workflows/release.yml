@@ -36,6 +36,8 @@ jobs:
     name: "🔍 Static-code checks..."
     runs-on: ubuntu-latest
     continue-on-error: true
+    env:
+      GO11MODULE: on
     steps:
       - uses: actions/checkout@v4
       - name: golangci-lint
@@ -46,9 +48,8 @@ jobs:
         uses: ./.github/actions/staticcheck
         with:
           version: ${{ env.STATICCHECK_VERSION }}
-      - uses: securego/gosec@master
-        with:
-          args: ./...
+      - name: gosec
+        uses: ./.github/actions/gosec
 
   GitLeaks:
     name: "🗂️ gitleaks check..."

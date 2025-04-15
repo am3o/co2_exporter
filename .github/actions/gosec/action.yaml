@@ -1,0 +1,18 @@
+name: 'GoSec'
+description: 'Run tool: GoSec'
+
+inputs:
+  go-version:
+    description: 'Go version to use'
+    required: false
+    default: '1.24'
+
+runs:
+  using: composite
+  steps:
+    - uses: actions/setup-go@v5
+      with:
+        go-version: ${{ inputs.go-version }}
+    - uses: securego/gosec@master
+      with:
+        args: ./...
