@@ -15,7 +15,7 @@ import (
 )
 
 func main() {
-	DevicePath, exists := os.LookupEnv("CO2MOINITOR_DEVICE")
+	DevicePath, exists := os.LookupEnv("CO2MONITOR_DEVICE")
 	if !exists {
 		DevicePath = "/dev/hidraw0"
 	}
