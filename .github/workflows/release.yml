@@ -75,7 +75,7 @@ jobs:
         with:
           go-version: ${{ env.GO_VERSION }}
       - uses: actions/checkout@v4
-      - uses: arduino/setup-task@v1
+      - uses: arduino/setup-task@v2
       - run: task build
 
   Security:
