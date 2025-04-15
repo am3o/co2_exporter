@@ -1,0 +1,16 @@
+name: 'Staticcheck'
+description: 'Run tool: staticcheck'
+
+inputs:
+  version:
+    description: 'staticcheck-Linter'
+    required: false
+    default: "2025.1"
+
+
+runs:
+  using: composite
+  steps:
+    - uses: dominikh/staticcheck-action@v1.3.1
+      with:
+        version: ${{ inputs.version }}
