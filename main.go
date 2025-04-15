@@ -58,14 +58,14 @@ func main() {
 			collector.SetTemperatureInCelsius(temperature)
 			collector.SetHumidityInPercent(humidity)
 
-			logger.Info("successfully measurement",
+			logger.Debug("successfully measurement",
 				zap.Float64("carbon_dioxide", carbonDioxide),
 				zap.Float64("temperature", temperature),
 				zap.Float64("humidity", humidity))
 		}
 	}(ctx)
 
-	http.Handle("/internal/metrics", promhttp.Handler())
+	http.Handle("/metrics", promhttp.Handler())
 
 	logger.Info("start exporter", zap.Int("port", 8080))
 	if err := http.ListenAndServe(net.JoinHostPort("", "8080"), nil); err != nil {
