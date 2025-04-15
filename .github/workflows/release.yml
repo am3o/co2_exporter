@@ -71,12 +71,11 @@ jobs:
       - Test
       - Staticchecks
     steps:
-      - uses: actions/setup-go@v5
+      - uses: actions/checkout@v4
+      - uses: ./.github/actions/taskfile
         with:
           go-version: ${{ env.GO_VERSION }}
-      - uses: actions/checkout@v4
-      - uses: arduino/setup-task@v1
-      - run: task build
+          command: build
 
   Security:
     name: "🔦 Security checks..."
