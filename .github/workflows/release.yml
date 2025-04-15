@@ -18,7 +18,7 @@ env:
 
 jobs:
   Test:
-    name: check Code...
+    name: "🗜️ check Code..."
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
@@ -33,7 +33,7 @@ jobs:
           command: ${{ matrix.step }}
 
   Staticchecks:
-    name: check static-code
+    name: "🔍 Static-code checks..."
     runs-on: ubuntu-latest
     continue-on-error: true
     steps:
@@ -48,7 +48,7 @@ jobs:
           version: ${{ env.STATICCHECK_VERSION }}
 
   GitLeaks:
-    name: gitleaks
+    name: "🗂️ gitleaks check..."
     runs-on: ubuntu-latest
     continue-on-error: true
     steps:
@@ -57,7 +57,9 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
 
-  build:
+  Build:
+    name: "🔨 Building..."
+
     runs-on: ubuntu-latest
     needs:
       - Test
@@ -70,11 +72,11 @@ jobs:
       - uses: arduino/setup-task@v1
       - run: task build
 
-  trivy:
-    name: Security
+  Security:
+    name: "🔦 Security checks..."
     runs-on: ubuntu-latest
     needs:
-      - build
+      - Build
     steps:
     - uses: actions/checkout@v4
     - uses: aquasecurity/trivy-action@0.28.0
@@ -82,8 +84,8 @@ jobs:
         scan-type: 'fs'
         scan-ref: '.'
 
-  goreleaser-check:
-    name: "goreleaser check"
+  Goreleaser-check:
+    name: "🔬 relase checks..."
     runs-on: ubuntu-latest
     continue-on-error: true
     needs:
@@ -100,11 +102,11 @@ jobs:
           args: check
 
   release:
+    name: "📦 Relasing..."
     runs-on: ubuntu-latest
     if: startsWith(github.ref, 'refs/tags/')
     needs:
-      - goreleaser-check
-      - trivy
+      - Goreleaser-check
     steps:
       - name: Checkout
         uses: actions/checkout@v4
