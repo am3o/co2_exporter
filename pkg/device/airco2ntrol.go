@@ -45,7 +45,7 @@ func (ac *AirController) Open(path string) error {
 }
 
 func (ac *AirController) Read() (carbonDioxide float64, temperature float64, humidity float64, err error) {
-	for i := 0; i < 4; i++ {
+	for range 4 {
 		buffer := make([]byte, 8)
 		_, err = ac.device.Read(buffer)
 		if err != nil {
