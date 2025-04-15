@@ -1,6 +1,7 @@
 package main
 
 import (
+	"context"
 	"net"
 	"net/http"
 	"os"
@@ -32,19 +33,22 @@ func main() {
 		logger.Fatal("could not open device stream", zap.Error(err))
 	}
 
-	defer func() {
-		if err := airController.Close(); err != nil {
+	ctx := context.Background()
+	defer ctx.Done()
+
+	defer func(ctx context.Context) {
+		if err := airController.CloseWithContext(ctx); err != nil {
 			logger.Fatal("could not close the device connection", zap.Error(err))
 			return
 		}
 
 		logger.Info("successfully closed connection to device")
-	}()
+	}(ctx)
 
-	go func() {
+	go func(ctx context.Context) {
 		ticker := time.NewTicker(10 * time.Second)
 		for ; ; <-ticker.C {
-			carbonDioxide, temperature, humidity, err := airController.Read()
+			carbonDioxide, temperature, humidity, err := airController.Read(ctx)
 			if err != nil {
 				logger.Error("faulty measurement", zap.Error(err))
 				continue
@@ -59,7 +63,7 @@ func main() {
 				zap.Float64("temperature", temperature),
 				zap.Float64("humidity", humidity))
 		}
-	}()
+	}(ctx)
 
 	http.Handle("/internal/metrics", promhttp.Handler())
 

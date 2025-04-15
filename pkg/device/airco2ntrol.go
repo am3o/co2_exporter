@@ -1,6 +1,7 @@
 package device
 
 import (
+	"context"
 	"errors"
 	"fmt"
 	"os"
@@ -29,6 +30,15 @@ func New() AirController {
 	}
 }
 
+func (ac *AirController) OpenWithContext(ctx context.Context, path string) error {
+	select {
+	case <-ctx.Done():
+		return ctx.Err()
+	default:
+		return ac.Open(path)
+	}
+}
+
 func (ac *AirController) Open(path string) error {
 	device, err := os.OpenFile(path, os.O_APPEND|os.O_RDONLY, 0)
 	if err != nil {
@@ -44,8 +54,16 @@ func (ac *AirController) Open(path string) error {
 	return nil
 }
 
-func (ac *AirController) Read() (carbonDioxide float64, temperature float64, humidity float64, err error) {
+func (ac *AirController) Read(ctx context.Context) (carbonDioxide float64, temperature float64, humidity float64, err error) {
 	for range 4 {
+		select {
+		case <-ctx.Done():
+			err = ctx.Err()
+			return
+		default:
+			// Continue with read
+		}
+
 		buffer := make([]byte, 8)
 		_, err = ac.device.Read(buffer)
 		if err != nil {
@@ -64,7 +82,17 @@ func (ac *AirController) Read() (carbonDioxide float64, temperature float64, hum
 			continue
 		}
 	}
+
 	return
+}
+
+func (ac *AirController) CloseWithContext(ctx context.Context) error {
+	select {
+	case <-ctx.Done():
+		return ctx.Err()
+	default:
+		return ac.Close()
+	}
 }
 
 func (ac *AirController) Close() error {
