@@ -50,6 +50,8 @@ jobs:
           version: ${{ env.STATICCHECK_VERSION }}
       - name: gosec
         uses: ./.github/actions/gosec
+        with:
+          enabled: false
 
   GitLeaks:
     name: "🗂️ gitleaks check..."

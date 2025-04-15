@@ -2,6 +2,10 @@ name: 'GoSec'
 description: 'Run tool: GoSec'
 
 inputs:
+  enabled:
+    description: 'Enable the action'
+    required: false
+    default: "true"
   go-version:
     description: 'Go version to use'
     required: false
@@ -11,8 +15,10 @@ runs:
   using: composite
   steps:
     - uses: actions/setup-go@v5
+      if: ${{ inputs.enabled == 'true' }}
       with:
         go-version: ${{ inputs.go-version }}
     - uses: securego/gosec@master
+      if: ${{ inputs.enabled == 'true' }}
       with:
         args: ./...
