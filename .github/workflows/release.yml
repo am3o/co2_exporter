@@ -17,20 +17,19 @@ env:
   STATICCHECK_VERSION: "2025.1"
 
 jobs:
-  test:
+  Test:
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
       matrix:
         step: [vet, test]
     steps:
-      - uses: actions/setup-go@v5
+      - uses: actions/checkout@v4
+      - name: ${{ matrix.step }}
+        uses: ./.github/actions/taskfile
         with:
           go-version: ${{ env.GO_VERSION }}
-      - uses: actions/checkout@v4
-      - uses: arduino/setup-task@v1
-      - name: ${{ matrix.step }}
-        run: task ${{ matrix.step }}
+          command: ${{ matrix.step }}
 
   golangci:
     name: golangci
@@ -60,7 +59,7 @@ jobs:
   build:
     runs-on: ubuntu-latest
     needs:
-      - test
+      - Test
       - golangci
       - staticcheck
     steps:

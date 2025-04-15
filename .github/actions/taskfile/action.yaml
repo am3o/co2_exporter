@@ -1,0 +1,24 @@
+name: 'Tasks'
+description: 'Run tasks command'
+
+inputs:
+  go-version:
+    description: 'Go version to use'
+    required: false
+    default: '1.24'
+  command:
+    description: 'Task command'
+    required: true
+
+runs:
+  using: composite
+  steps:
+    - uses: actions/setup-go@v5
+      with:
+        go-version: ${{ inputs.go-version }}
+    - uses: arduino/setup-task@v2
+      with:
+        version: 3.x
+    - name: Execute Task
+      shell: bash
+      run: task ${{ inputs.command }}
