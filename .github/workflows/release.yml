@@ -32,10 +32,9 @@ jobs:
           go-version: ${{ env.GO_VERSION }}
           command: ${{ matrix.step }}
 
-  Staticchecks:
-    name: "🔍 Static-code checks..."
+  Lint:
+    name: "🧹 golangci-lint"
     runs-on: ubuntu-latest
-    continue-on-error: true
     env:
       GO11MODULE: on
     steps:
@@ -44,14 +43,30 @@ jobs:
         uses: ./.github/actions/golangci
         with:
           version: ${{ env.GOLANGCI_VERSION }}
-      - name: staticcheck
-        uses: ./.github/actions/staticcheck
-        with:
-          version: ${{ env.STATICCHECK_VERSION }}
+
+  GoSecurity:
+    name: "🔒 gosec (disabled)"
+    runs-on: ubuntu-latest
+    env:
+      GO11MODULE: on
+    steps:
+      - uses: actions/checkout@v4
       - name: gosec
         uses: ./.github/actions/gosec
         with:
           enabled: false
+
+  Staticchecks:
+    name: "🔍 Static-code checks..."
+    runs-on: ubuntu-latest
+    env:
+      GO11MODULE: on
+    steps:
+      - uses: actions/checkout@v4
+      - name: staticcheck
+        uses: ./.github/actions/staticcheck
+        with:
+          version: ${{ env.STATICCHECK_VERSION }}
 
   GitLeaks:
     name: "🗂️ gitleaks check..."
@@ -69,6 +84,8 @@ jobs:
     runs-on: ubuntu-latest
     needs:
       - Test
+      - Lint
+      - GoSecurity
       - Staticchecks
     steps:
       - uses: actions/checkout@v4
