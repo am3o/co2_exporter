@@ -20,4 +20,3 @@ runs:
     - uses: golangci/golangci-lint-action@v7
       with:
         version: ${{ inputs.version}}
-

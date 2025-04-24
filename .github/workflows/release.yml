@@ -68,6 +68,16 @@ jobs:
         with:
           version: ${{ env.STATICCHECK_VERSION }}
 
+  govuln:
+    name: "🛡 govulncheck"
+    runs-on: ubuntu-latest
+    env:
+      GO11MODULE: on
+    steps:
+      - uses: actions/checkout@v4
+      - name: govulncheck
+        uses: ./.github/actions/govuln
+
   GitLeaks:
     name: "🗂️ gitleaks check..."
     runs-on: ubuntu-latest
@@ -86,6 +96,7 @@ jobs:
       - Test
       - Lint
       - GoSecurity
+      - govuln
       - Staticchecks
     steps:
       - uses: actions/checkout@v4
