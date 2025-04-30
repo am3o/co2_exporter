@@ -6,7 +6,9 @@ before:
     - go mod tidy
 
 builds:
-  - goos:
+  - env:
+    - CGO_ENABLED=1
+    goos:
       - 'linux'
     goarch:
       - 'amd64'
