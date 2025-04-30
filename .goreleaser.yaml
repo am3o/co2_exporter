@@ -48,10 +48,9 @@ checksum:
 dockers:
   - image_templates:
     - "ghcr.io/am3o/co2_exporter:{{ .Version }}-amd64"
-    goarch: amd64
-    goos: linux
     use: buildx
     build_flag_templates:
+      - --platform=linux/amd64
       - --label=org.opencontainers.image.created={{ time "2006-01-02T15:04:05Z07:00" }}
       - --label=org.opencontainers.image.licenses=MIT
       - --label=org.opencontainers.image.name={{.ProjectName}}
@@ -63,10 +62,9 @@ dockers:
 
   - image_templates:
       - "ghcr.io/am3o/co2_exporter:{{ .Version }}-arm64"
-    goarch: arm64
-    goos: linux
     use: buildx
     build_flag_templates:
+      - --platform=linux/arm64/v8
       - --label=org.opencontainers.image.created={{ time "2006-01-02T15:04:05Z07:00" }}
       - --label=org.opencontainers.image.licenses=MIT
       - --label=org.opencontainers.image.name={{.ProjectName}}
@@ -78,11 +76,10 @@ dockers:
 
   - image_templates:
       - "ghcr.io/am3o/co2_exporter:{{ .Version }}-armv6"
-    goarch: arm
-    goos: linux
     goarm: 6
     use: buildx
     build_flag_templates:
+      - --platform=linux/arm/v6
       - --label=org.opencontainers.image.created={{ time "2006-01-02T15:04:05Z07:00" }}
       - --label=org.opencontainers.image.licenses=MIT
       - --label=org.opencontainers.image.name={{.ProjectName}}
@@ -99,6 +96,7 @@ dockers:
     goarm: 7
     use: buildx
     build_flag_templates:
+      - --platform=linux/arm/v7
       - --label=org.opencontainers.image.created={{ time "2006-01-02T15:04:05Z07:00" }}
       - --label=org.opencontainers.image.licenses=MIT
       - --label=org.opencontainers.image.name={{.ProjectName}}
