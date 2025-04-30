@@ -14,6 +14,10 @@ import (
 	"go.uber.org/zap"
 )
 
+var (
+	Version string
+)
+
 func main() {
 	DevicePath, exists := os.LookupEnv("CO2MONITOR_DEVICE")
 	if !exists {
@@ -30,7 +34,7 @@ func main() {
 
 	airController := device.New()
 	if err := airController.Open(DevicePath); err != nil {
-		logger.Fatal("could not open device stream", zap.Error(err))
+		logger.With(zap.Error(err)).Fatal("could not open device stream")
 	}
 
 	ctx := context.Background()
@@ -38,7 +42,7 @@ func main() {
 
 	defer func(ctx context.Context) {
 		if err := airController.CloseWithContext(ctx); err != nil {
-			logger.Fatal("could not close the device connection", zap.Error(err))
+			logger.With(zap.Error(err)).Fatal("could not close the device connection")
 			return
 		}
 
@@ -50,7 +54,7 @@ func main() {
 		for ; ; <-ticker.C {
 			carbonDioxide, temperature, humidity, err := airController.Read(ctx)
 			if err != nil {
-				logger.Error("faulty measurement", zap.Error(err))
+				logger.With(zap.Error(err)).Error("faulty measurement")
 				continue
 			}
 
@@ -58,17 +62,21 @@ func main() {
 			collector.SetTemperatureInCelsius(temperature)
 			collector.SetHumidityInPercent(humidity)
 
-			logger.Debug("successfully measurement",
+			logger.With(
 				zap.Float64("carbon_dioxide", carbonDioxide),
 				zap.Float64("temperature", temperature),
-				zap.Float64("humidity", humidity))
+				zap.Float64("humidity", humidity),
+			).Debug("successfully measurement")
 		}
 	}(ctx)
 
 	http.Handle("/metrics", promhttp.Handler())
 
-	logger.Info("start exporter", zap.Int("port", 8080))
+	logger.With(
+		zap.String("version", Version),
+		zap.Int("port", 8080),
+	).Info("start co2-exporter service")
 	if err := http.ListenAndServe(net.JoinHostPort("", "8080"), nil); err != nil {
-		logger.Fatal("could not start http service", zap.Error(err))
+		logger.With(zap.Error(err)).Fatal("could not start http service")
 	}
 }

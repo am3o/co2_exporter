@@ -17,6 +17,14 @@ builds:
     goarm:
       - '6'
       - '7'
+    goamd64:
+      - v2
+      - v3
+    goarm64:
+      - v9.0
+    ldflags:
+      - -s -w -X main.Version={{.Version}}
+      - usemsan=-msan
 
 archives:
   - formats: [tar.gz]
