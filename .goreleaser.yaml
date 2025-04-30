@@ -57,8 +57,8 @@ dockers:
       - --label=org.opencontainers.image.source={{ .GitURL }}
       - --label=org.opencontainers.image.title={{ .ProjectName }}
       - --label=org.opencontainers.image.version={{ .Version }}
-      - --platform=linux/amd64
       - --pull
+
   - image_templates:
       - "ghcr.io/am3o/co2_exporter:{{ .Version }}-arm64"
     goarch: arm64
@@ -72,8 +72,8 @@ dockers:
       - --label=org.opencontainers.image.source={{ .GitURL }}
       - --label=org.opencontainers.image.title={{ .ProjectName }}
       - --label=org.opencontainers.image.version={{ .Version }}
-      - --platform=linux/arm64/v9
       - --pull
+
   - image_templates:
       - "ghcr.io/am3o/co2_exporter:{{ .Version }}-armv6"
     goarch: arm
@@ -88,7 +88,6 @@ dockers:
       - --label=org.opencontainers.image.source={{ .GitURL }}
       - --label=org.opencontainers.image.title={{ .ProjectName }}
       - --label=org.opencontainers.image.version={{ .Version }}
-      - --platform=linux/arm/v6
       - --pull
 
   - image_templates:
@@ -105,7 +104,6 @@ dockers:
       - --label=org.opencontainers.image.source={{ .GitURL }}
       - --label=org.opencontainers.image.title={{ .ProjectName }}
       - --label=org.opencontainers.image.version={{ .Version }}
-      - --platform=linux/arm/v7
       - --pull
 
 docker_manifests:
