@@ -1,7 +1,8 @@
 # airco2ntrol CO₂ Exporter
 
 [![Go Report Card](https://goreportcard.com/badge/github.com/am3o/co2_exporter)](https://goreportcard.com/report/github.com/am3o/co2_exporter)
-[![Docker Image](https://img.shields.io/docker/pulls/netzaffe/co2-exporter?logo=docker)](https://hub.docker.com/r/netzaffe/co2-exporter)
+[![Docker Image](https://img.shields.io/badge/ghcr.io-am3o%2Fco2--exporter-blue?logo=github)](https://ghcr.io/am3o/co2_exporter)
+[![Release](https://github.com/am3o/co2_exporter/actions/workflows/release.yml/badge.svg)](https://github.com/am3o/co2_exporter/actions/workflows/release.yml)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 
 A Prometheus exporter for collecting CO₂, temperature, and humidity metrics from the  
@@ -26,7 +27,7 @@ This exporter communicates with the device via the Linux HIDRAW interface (e.g.,
 ### From Source
 
 ```bash
-go install github.com/netzaffe/co2_exporter@latest
+go install github.com/am3o/co2_exporter@latest
 
 # Run with root privileges due to HIDRAW access requirement
 sudo CO2MOINITOR_DEVICE=/dev/hidraw0 $GOPATH/bin/co2_exporter
@@ -37,11 +38,11 @@ sudo CO2MOINITOR_DEVICE=/dev/hidraw0 $GOPATH/bin/co2_exporter
 ### Using Docker
 ```bash
 docker run -d \
-  --name co2-exporter \
-  -v /dev/hidraw0:/dev/hidraw0:ro \
-  --privileged \
-  -p 8080:8080 \
-  netzaffe/co2-exporter:latest
+    --name co2-exporter \
+    -v /dev/hidraw0:/dev/hidraw0:ro \
+    --privileged \
+    -p 8080:8080 \
+    ghcr.io/am3o/co2_exporter:latest
 ```
 
 ## 📡 Prometheus Configuration
