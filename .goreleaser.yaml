@@ -6,9 +6,7 @@ before:
     - go mod tidy
 
 builds:
-  - env:
-      - CGO_ENABLED=0
-    goos:
+  - goos:
       - 'linux'
     goarch:
       - 'amd64'
@@ -18,13 +16,17 @@ builds:
       - '6'
       - '7'
     goamd64:
-      - v2
       - v3
     goarm64:
       - v9.0
+    tags:
+      - netgo
+      - osusergo
+    gcflags:
+      - all=-trimpath
     ldflags:
       - -s -w -X main.Version={{.Version}}
-      - usemsan=-msan
+    buildmode: pie
 
 archives:
   - formats: [tar.gz]
