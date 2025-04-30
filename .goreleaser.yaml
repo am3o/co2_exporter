@@ -28,7 +28,6 @@ builds:
       - all=-trimpath
     ldflags:
       - -s -w -X main.Version={{.Version}}
-    buildmode: pie
 
 archives:
   - formats: [tar.gz]
