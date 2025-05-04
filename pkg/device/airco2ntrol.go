@@ -21,38 +21,24 @@ const (
 )
 
 type AirController struct {
-	device           io.ReadCloser
-	enableReportCode [9]byte
+	device io.ReadCloser
 }
 
-func New() AirController {
-	return AirController{
-		enableReportCode: [9]byte{0x0, 0xc4, 0xc6, 0xc0, 0x92, 0x40, 0x23, 0xdc, 0x96},
-	}
-}
-
-func (ac *AirController) OpenWithContext(ctx context.Context, path string) error {
-	select {
-	case <-ctx.Done():
-		return ctx.Err()
-	default:
-		return ac.Open(path)
-	}
-}
-
-func (ac *AirController) Open(path string) error {
+func New(path string) (AirController, error) {
 	device, err := os.OpenFile(path, os.O_APPEND|os.O_RDONLY, 0)
 	if err != nil {
-		return fmt.Errorf("could not open file: %w", err)
+		return AirController{}, fmt.Errorf("could not open file: %w", err)
 	}
 
-	_, _, ep := syscall.Syscall(syscall.SYS_IOCTL, device.Fd(), uintptr(enableHidiocsFeature9), uintptr(unsafe.Pointer(&ac.enableReportCode)))
+	enableReportCode := [9]byte{0x0, 0xc4, 0xc6, 0xc0, 0x92, 0x40, 0x23, 0xdc, 0x96}
+	_, _, ep := syscall.Syscall(syscall.SYS_IOCTL, device.Fd(), uintptr(enableHidiocsFeature9), uintptr(unsafe.Pointer(&enableReportCode)))
 	if ep != 0 {
-		return fmt.Errorf("could not enable device to stream values: %w", device.Close())
+		return AirController{}, fmt.Errorf("could not enable device to stream values: %w", device.Close())
 	}
 
-	ac.device = device
-	return nil
+	return AirController{
+		device: device,
+	}, nil
 }
 
 func (ac *AirController) Read(ctx context.Context) (carbonDioxide float64, temperature float64, humidity float64, err error) {
@@ -62,7 +48,6 @@ func (ac *AirController) Read(ctx context.Context) (carbonDioxide float64, tempe
 			err = ctx.Err()
 			return
 		default:
-			// Continue with read
 		}
 
 		buffer := make([]byte, 8)
@@ -87,15 +72,12 @@ func (ac *AirController) Read(ctx context.Context) (carbonDioxide float64, tempe
 	return
 }
 
-func (ac *AirController) CloseWithContext(ctx context.Context) error {
+func (ac *AirController) Close(ctx context.Context) error {
 	select {
 	case <-ctx.Done():
 		return ctx.Err()
 	default:
-		return ac.Close()
 	}
-}
 
-func (ac *AirController) Close() error {
 	return ac.device.Close()
 }

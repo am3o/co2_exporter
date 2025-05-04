@@ -32,16 +32,16 @@ func main() {
 	collector := collector.New()
 	prometheus.MustRegister(collector)
 
-	airController := device.New()
-	if err := airController.Open(DevicePath); err != nil {
-		logger.With(zap.Error(err)).Fatal("could not open device stream")
-	}
-
 	ctx := context.Background()
 	defer ctx.Done()
 
+	airController, err := device.New(DevicePath)
+	if err != nil {
+		logger.With(zap.Error(err)).Fatal("could not open device stream")
+	}
+
 	defer func(ctx context.Context) {
-		if err := airController.CloseWithContext(ctx); err != nil {
+		if err := airController.Close(ctx); err != nil {
 			logger.With(zap.Error(err)).Fatal("could not close the device connection")
 			return
 		}
