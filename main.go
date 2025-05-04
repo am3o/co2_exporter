@@ -2,6 +2,7 @@ package main
 
 import (
 	"context"
+	"log/slog"
 	"net"
 	"net/http"
 	"os"
@@ -11,7 +12,6 @@ import (
 	"github.com/am3o/co2_exporter/pkg/device"
 	"github.com/prometheus/client_golang/prometheus"
 	"github.com/prometheus/client_golang/prometheus/promhttp"
-	"go.uber.org/zap"
 )
 
 var (
@@ -24,29 +24,31 @@ func main() {
 		DevicePath = "/dev/hidraw0"
 	}
 
-	logger, err := zap.NewProduction()
-	if err != nil {
-		panic(err)
-	}
-
 	collector := collector.New()
 	prometheus.MustRegister(collector)
 
 	ctx := context.Background()
 	defer ctx.Done()
 
+	logger := slog.New(slog.NewJSONHandler(os.Stdout, nil))
+
 	airController, err := device.New(DevicePath)
 	if err != nil {
-		logger.With(zap.Error(err)).Fatal("could not open device stream")
+		logger.
+			With(slog.Any("error", err)).
+			ErrorContext(ctx, "could not open device stream")
+		os.Exit(1)
 	}
 
 	defer func(ctx context.Context) {
 		if err := airController.Close(ctx); err != nil {
-			logger.With(zap.Error(err)).Fatal("could not close the device connection")
-			return
+			logger.
+				With(slog.Any("error", err)).
+				ErrorContext(ctx, "could not close the device connection")
+			os.Exit(1)
 		}
 
-		logger.Info("successfully closed connection to device")
+		logger.InfoContext(ctx, "successfully closed connection to device")
 	}(ctx)
 
 	go func(ctx context.Context) {
@@ -54,7 +56,9 @@ func main() {
 		for ; ; <-ticker.C {
 			carbonDioxide, temperature, humidity, err := airController.Read(ctx)
 			if err != nil {
-				logger.With(zap.Error(err)).Error("faulty measurement")
+				logger.
+					With(slog.Any("error", err)).
+					ErrorContext(ctx, "faulty measurement")
 				continue
 			}
 
@@ -63,20 +67,23 @@ func main() {
 			collector.SetHumidityInPercent(humidity)
 
 			logger.With(
-				zap.Float64("carbon_dioxide", carbonDioxide),
-				zap.Float64("temperature", temperature),
-				zap.Float64("humidity", humidity),
-			).Debug("successfully measurement")
+				slog.Float64("carbon_dioxide", carbonDioxide),
+				slog.Float64("temperature", temperature),
+				slog.Float64("humidity", humidity),
+			).DebugContext(ctx, "successfully measurement")
 		}
 	}(ctx)
 
 	http.Handle("/metrics", promhttp.Handler())
 
 	logger.With(
-		zap.String("version", Version),
-		zap.Int("port", 8080),
+		slog.String("version", Version),
+		slog.Int("port", 8080),
 	).Info("start co2-exporter service")
 	if err := http.ListenAndServe(net.JoinHostPort("", "8080"), nil); err != nil {
-		logger.With(zap.Error(err)).Fatal("could not start http service")
+		logger.
+			With(slog.Any("error", err)).
+			ErrorContext(ctx, "could not start http service")
+		os.Exit(1)
 	}
 }
