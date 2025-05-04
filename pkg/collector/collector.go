@@ -10,24 +10,24 @@ const (
 )
 
 type Collector struct {
-	CarbonDioxideGauge *prometheus.GaugeVec
-	TemperatureGauge   *prometheus.GaugeVec
-	HumidityGauge      *prometheus.GaugeVec
+	carbonDioxide *prometheus.GaugeVec
+	temperature   *prometheus.GaugeVec
+	humidity      *prometheus.GaugeVec
 }
 
 func New() *Collector {
 	return &Collector{
-		CarbonDioxideGauge: prometheus.NewGaugeVec(prometheus.GaugeOpts{
+		carbonDioxide: prometheus.NewGaugeVec(prometheus.GaugeOpts{
 			Namespace: namespace,
 			Name:      "carbon_dioxide_total",
 			Help:      "Total detected carbon dioxide in ppm of the sensor",
 		}, []string{labelUnit}),
-		TemperatureGauge: prometheus.NewGaugeVec(prometheus.GaugeOpts{
+		temperature: prometheus.NewGaugeVec(prometheus.GaugeOpts{
 			Namespace: namespace,
 			Name:      "temperature_total",
 			Help:      "Total detected temperature of the sensor",
 		}, []string{labelUnit}),
-		HumidityGauge: prometheus.NewGaugeVec(prometheus.GaugeOpts{
+		humidity: prometheus.NewGaugeVec(prometheus.GaugeOpts{
 			Namespace: namespace,
 			Name:      "humidity_total",
 			Help:      "Total detected humidity of the sensor",
@@ -40,9 +40,9 @@ func (c *Collector) Describe(descs chan<- *prometheus.Desc) {
 }
 
 func (c *Collector) Collect(metrics chan<- prometheus.Metric) {
-	c.HumidityGauge.Collect(metrics)
-	c.TemperatureGauge.Collect(metrics)
-	c.CarbonDioxideGauge.Collect(metrics)
+	c.humidity.Collect(metrics)
+	c.temperature.Collect(metrics)
+	c.carbonDioxide.Collect(metrics)
 }
 
 func (c *Collector) SetCarbonDioxideInPPM(value float64) {
@@ -50,7 +50,7 @@ func (c *Collector) SetCarbonDioxideInPPM(value float64) {
 		return
 	}
 
-	c.CarbonDioxideGauge.With(prometheus.Labels{labelUnit: "ppm"}).Set(value)
+	c.carbonDioxide.With(prometheus.Labels{labelUnit: "ppm"}).Set(value)
 }
 
 func (c *Collector) SetTemperatureInCelsius(value float64) {
@@ -58,12 +58,12 @@ func (c *Collector) SetTemperatureInCelsius(value float64) {
 		return
 	}
 
-	c.TemperatureGauge.With(prometheus.Labels{labelUnit: "celsius"}).Set(value)
+	c.temperature.With(prometheus.Labels{labelUnit: "celsius"}).Set(value)
 }
 
 func (c *Collector) SetHumidityInPercent(value float64) {
 	if value == 0 {
 		return
 	}
-	c.HumidityGauge.With(prometheus.Labels{labelUnit: "percent"}).Set(value)
+	c.humidity.With(prometheus.Labels{labelUnit: "percent"}).Set(value)
 }
