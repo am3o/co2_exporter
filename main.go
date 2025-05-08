@@ -59,6 +59,7 @@ func main() {
 				logger.
 					With(slog.Any("error", err)).
 					ErrorContext(ctx, "faulty measurement")
+				collector.IncError("read_sensor")
 				continue
 			}
 

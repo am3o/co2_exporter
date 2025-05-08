@@ -2,7 +2,6 @@ package device
 
 import (
 	"context"
-	"errors"
 	"fmt"
 	"io"
 	"os"
@@ -20,8 +19,12 @@ const (
 	enableHidiocsFeature9 = 0xC0094806
 )
 
+type Device interface {
+	io.ReadCloser
+}
+
 type AirController struct {
-	device io.ReadCloser
+	device Device
 }
 
 func New(path string) (AirController, error) {
@@ -53,7 +56,7 @@ func (ac *AirController) Read(ctx context.Context) (carbonDioxide float64, tempe
 		buffer := make([]byte, 8)
 		_, err = ac.device.Read(buffer)
 		if err != nil {
-			return 0, 0, 0, errors.New("invalid measurement detected")
+			return 0, 0, 0, fmt.Errorf("invalid measurement detected: %w", err)
 		}
 
 		signal := model.Signal(buffer)
