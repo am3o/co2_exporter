@@ -54,24 +54,21 @@ func main() {
 	go func(ctx context.Context) {
 		ticker := time.NewTicker(10 * time.Second)
 		for ; ; <-ticker.C {
+			now := time.Now()
 			carbonDioxide, temperature, humidity, err := airController.Read(ctx)
 			if err != nil {
 				logger.
 					With(slog.Any("error", err)).
 					ErrorContext(ctx, "faulty measurement")
-				collector.IncError("read_sensor")
+				collector.IncFailure("read_sensor")
+				collector.Track(time.Since(now))
 				continue
 			}
 
 			collector.SetCarbonDioxideInPPM(carbonDioxide)
 			collector.SetTemperatureInCelsius(temperature)
 			collector.SetHumidityInPercent(humidity)
-
-			logger.With(
-				slog.Float64("carbon_dioxide", carbonDioxide),
-				slog.Float64("temperature", temperature),
-				slog.Float64("humidity", humidity),
-			).DebugContext(ctx, "successfully measurement")
+			collector.Track(time.Since(now))
 		}
 	}(ctx)
 
