@@ -20,10 +20,12 @@ jobs:
   Test:
     name: "🗜️ check Code..."
     runs-on: ubuntu-latest
+    env:
+      GO11MODULE: on
     strategy:
       fail-fast: false
       matrix:
-        step: [vet, test]
+        step: [vet, test, staticcheck, govuln, gosec, lint ]
     steps:
       - uses: actions/checkout@v4
       - name: ${{ matrix.step }}
@@ -31,52 +33,6 @@ jobs:
         with:
           go-version: ${{ env.GO_VERSION }}
           command: ${{ matrix.step }}
-
-  Lint:
-    name: "🧹 golangci-lint"
-    runs-on: ubuntu-latest
-    env:
-      GO11MODULE: on
-    steps:
-      - uses: actions/checkout@v4
-      - name: golangci-lint
-        uses: ./.github/actions/golangci
-        with:
-          version: ${{ env.GOLANGCI_VERSION }}
-
-  GoSecurity:
-    name: "🔒 gosec (disabled)"
-    runs-on: ubuntu-latest
-    env:
-      GO11MODULE: on
-    steps:
-      - uses: actions/checkout@v4
-      - name: gosec
-        uses: ./.github/actions/gosec
-        with:
-          enabled: false
-
-  Staticchecks:
-    name: "🔍 Static-code checks..."
-    runs-on: ubuntu-latest
-    env:
-      GO11MODULE: on
-    steps:
-      - uses: actions/checkout@v4
-      - name: staticcheck
-        uses: ./.github/actions/staticcheck
-        with:
-          version: ${{ env.STATICCHECK_VERSION }}
-
-  govuln:
-    name: "🛡 govulncheck"
-    runs-on: ubuntu-latest
-    env:
-      GO11MODULE: on
-    steps:
-      - uses: actions/checkout@v4
-      - name: govulncheck
-        uses: ./.github/actions/govuln
 
   GitLeaks:
     name: "🗂️ gitleaks check..."
@@ -94,10 +50,6 @@ jobs:
     runs-on: ubuntu-latest
     needs:
       - Test
-      - Lint
-      - GoSecurity
-      - govuln
-      - Staticchecks
     steps:
       - uses: actions/checkout@v4
       - uses: ./.github/actions/taskfile
