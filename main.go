@@ -78,7 +78,12 @@ func main() {
 		slog.String("version", Version),
 		slog.Int("port", 8080),
 	).Info("start co2-exporter service")
-	if err := http.ListenAndServe(net.JoinHostPort("", "8080"), nil); err != nil {
+
+	server := &http.Server{
+		Addr:              net.JoinHostPort("", "8080"),
+		ReadHeaderTimeout: 3 * time.Second,
+	}
+	if err := server.ListenAndServe(); err != nil {
 		logger.
 			With(slog.Any("error", err)).
 			ErrorContext(ctx, "could not start http service")
