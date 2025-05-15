@@ -1,29 +1,46 @@
 version: '3'
 
 tasks:
+  init:
+    silent: true
+    cmds:
+      - go mod tidy
+      - go mod vendor
   build:
     silent: true
     deps:
       - clean
     cmds:
-      - go build .
-
-  lint:
-    preconditions:
-      - go install github.com/golangci/golangci-lint/cmd/golangci-lint@v1.44.2
+      - go build -ldflags="-s -w" .
+  staticcheck:
+    deps:
+      - init
     cmds:
-      - golangci-lint run ./...
-
+      - go tool staticcheck ./...
+  gosec:
+    deps:
+      - init
+    cmds:
+      - go tool gosec ./...
+  lint:
+    deps:
+      - init
+    cmds:
+      - go tool golangci-lint run ./...
+  govuln:
+    deps:
+      - init
+    cmds:
+      - go tool govulncheck ./...
   vet:
     silent: true
     cmds:
       - go vet ./...
-
   test:
     cmds:
       - go test -v -cover -race -shuffle=on ./...
-
   clean:
     silent: true
     cmds:
-      - rm -f tasmota_exporter
+      - rm -f co2_exporter
+      - rm -rf dist
