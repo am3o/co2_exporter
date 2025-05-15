@@ -35,6 +35,7 @@ func New(path string) (AirController, error) {
 	}
 
 	enableReportCode := [9]byte{0x0, 0xc4, 0xc6, 0xc0, 0x92, 0x40, 0x23, 0xdc, 0x96}
+	//#nosec:G103 (CWE-242): Use of unsage calls should be audited
 	_, _, ep := syscall.Syscall(syscall.SYS_IOCTL, device.Fd(), uintptr(enableHidiocsFeature9), uintptr(unsafe.Pointer(&enableReportCode)))
 	if ep != 0 {
 		return AirController{}, fmt.Errorf("could not enable device to stream values: %w", device.Close())
