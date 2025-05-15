@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"io"
 	"os"
+	"path/filepath"
 	"syscall"
 	"unsafe"
 
@@ -28,7 +29,7 @@ type AirController struct {
 }
 
 func New(path string) (AirController, error) {
-	device, err := os.OpenFile(path, os.O_APPEND|os.O_RDONLY, 0)
+	device, err := os.OpenFile(filepath.Clean(path), os.O_APPEND|os.O_RDONLY, 0)
 	if err != nil {
 		return AirController{}, fmt.Errorf("could not open file: %w", err)
 	}
