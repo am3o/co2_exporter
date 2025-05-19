@@ -4,8 +4,7 @@ tasks:
   init:
     silent: true
     cmds:
-      - go mod tidy
-      - go mod vendor
+      - go work vendor
   build:
     silent: true
     deps:
