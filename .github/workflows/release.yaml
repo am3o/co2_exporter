@@ -23,9 +23,27 @@ jobs:
     env:
       GO11MODULE: on
     strategy:
-      fail-fast: false
+      fail-fast: true
       matrix:
         step: [vet, test, govuln, lint ]
+    steps:
+      - uses: actions/checkout@v4
+      - name: ${{ matrix.step }}
+        uses: ./.github/actions/taskfile
+        with:
+          go-version: ${{ env.GO_VERSION }}
+          command: ${{ matrix.step }}
+
+  staticchecks:
+    name: "🗜️ check staticchecks..."
+    runs-on: ubuntu-latest
+    continue-on-error: true
+    env:
+      GO11MODULE: on
+    strategy:
+      fail-fast: false
+      matrix:
+        step: [staticcheck, gosec]
     steps:
       - uses: actions/checkout@v4
       - name: ${{ matrix.step }}
@@ -46,10 +64,10 @@ jobs:
 
   Build:
     name: "🔨 Building..."
-
     runs-on: ubuntu-latest
     needs:
       - Test
+      - staticchecks
     steps:
       - uses: actions/checkout@v4
       - uses: ./.github/actions/taskfile
