@@ -14,7 +14,6 @@ env:
   # Common versions
   GO_VERSION: "1.24"
   GOLANGCI_VERSION: "v2.0"
-  STATICCHECK_VERSION: "2025.1"
 
 jobs:
   Test:
@@ -25,25 +24,7 @@ jobs:
     strategy:
       fail-fast: true
       matrix:
-        step: [vet, test, govuln, lint ]
-    steps:
-      - uses: actions/checkout@v4
-      - name: ${{ matrix.step }}
-        uses: ./.github/actions/taskfile
-        with:
-          go-version: ${{ env.GO_VERSION }}
-          command: ${{ matrix.step }}
-
-  staticchecks:
-    name: "🗜️ check staticchecks..."
-    runs-on: ubuntu-latest
-    continue-on-error: true
-    env:
-      GO11MODULE: on
-    strategy:
-      fail-fast: false
-      matrix:
-        step: [staticcheck, gosec]
+        step: [vet, test, govuln, lint, staticcheck ]
     steps:
       - uses: actions/checkout@v4
       - name: ${{ matrix.step }}
@@ -67,7 +48,6 @@ jobs:
     runs-on: ubuntu-latest
     needs:
       - Test
-      - staticchecks
     steps:
       - uses: actions/checkout@v4
       - uses: ./.github/actions/taskfile
