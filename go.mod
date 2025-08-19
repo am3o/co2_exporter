@@ -1,6 +1,6 @@
 module github.com/am3o/co2_exporter
 
-go 1.24.3
+go 1.25
 
 require (
 	github.com/prometheus/client_golang v1.23.0
