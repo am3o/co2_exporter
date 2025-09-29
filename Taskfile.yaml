@@ -1,12 +1,11 @@
 version: '3'
 
+silent: true
 tasks:
   init:
-    silent: true
     cmds:
       - go work vendor
   build:
-    silent: true
     deps:
       - clean
     cmds:
@@ -32,14 +31,12 @@ tasks:
     cmds:
       - go tool govulncheck ./...
   vet:
-    silent: true
     cmds:
       - go vet ./...
   test:
     cmds:
       - go test -v -cover -race -shuffle=on ./...
   clean:
-    silent: true
     cmds:
       - rm -f co2_exporter
       - rm -rf dist
