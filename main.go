@@ -24,13 +24,13 @@ func main() {
 		DevicePath = "/dev/hidraw0"
 	}
 
-	collector := collector.New()
-	prometheus.MustRegister(collector)
-
 	ctx := context.Background()
 	defer ctx.Done()
 
 	logger := slog.New(slog.NewJSONHandler(os.Stdout, nil))
+	logger.
+		With(slog.String("version", Version)).
+		InfoContext(ctx, "airco2ntrol CO₂ Exporter")
 
 	airController, err := device.New(DevicePath)
 	if err != nil {
@@ -51,8 +51,13 @@ func main() {
 		logger.InfoContext(ctx, "successfully closed connection to device")
 	}(ctx)
 
+	collector := collector.New()
+	prometheus.MustRegister(collector)
+
+	http.Handle("/metrics", promhttp.Handler())
+
 	go func(ctx context.Context) {
-		ticker := time.NewTicker(10 * time.Second)
+		ticker := time.NewTicker(15 * time.Second)
 		for ; ; <-ticker.C {
 			now := time.Now()
 			carbonDioxide, temperature, humidity, err := airController.Read(ctx)
@@ -72,17 +77,14 @@ func main() {
 		}
 	}(ctx)
 
-	http.Handle("/metrics", promhttp.Handler())
+	logger.
+		With(slog.Int("port", 8080)).
+		InfoContext(ctx, "start co2-exporter service")
 
-	logger.With(
-		slog.String("version", Version),
-		slog.Int("port", 8080),
-	).Info("start co2-exporter service")
-
-	server := &http.Server{
+	server := new(http.Server{
 		Addr:              net.JoinHostPort("", "8080"),
 		ReadHeaderTimeout: 3 * time.Second,
-	}
+	})
 	if err := server.ListenAndServe(); err != nil {
 		logger.
 			With(slog.Any("error", err)).
