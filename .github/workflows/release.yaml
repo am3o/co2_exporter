@@ -24,7 +24,7 @@ jobs:
     strategy:
       fail-fast: true
       matrix:
-        step: [vet, test, govuln, lint, staticcheck ]
+        step: [vet, test, govuln, lint, staticcheck, revive]
     steps:
       - uses: actions/checkout@v6
       - name: ${{ matrix.step }}

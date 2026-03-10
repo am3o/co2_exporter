@@ -30,6 +30,11 @@ tasks:
       - init
     cmds:
       - go tool govulncheck ./...
+  revive:
+    deps:
+      - init
+    cmds:
+      - go tool revive --formatter stylish ./...
   vet:
     cmds:
       - go vet ./...
