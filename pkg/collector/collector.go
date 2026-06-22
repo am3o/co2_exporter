@@ -14,7 +14,7 @@ const (
 
 type Collector struct {
 	read          prometheus.Histogram
-	failure       *prometheus.GaugeVec
+	failure       *prometheus.CounterVec
 	carbonDioxide *prometheus.GaugeVec
 	temperature   *prometheus.GaugeVec
 	humidity      *prometheus.GaugeVec
@@ -28,7 +28,7 @@ func New() *Collector {
 			Help:      "Histogram of read operation duration",
 			Buckets:   []float64{1, 2, 3, 5, 8, 13, 21, 34, 55, 89, 144},
 		}),
-		failure: prometheus.NewGaugeVec(prometheus.GaugeOpts{
+		failure: prometheus.NewCounterVec(prometheus.CounterOpts{
 			Namespace: namespace,
 			Name:      "failure_total",
 			Help:      "Total number of failed operations",
