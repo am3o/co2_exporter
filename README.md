@@ -30,7 +30,7 @@ This exporter communicates with the device via the Linux HIDRAW interface (e.g.,
 go install github.com/am3o/co2_exporter@latest
 
 # Run with root privileges due to HIDRAW access requirement
-sudo CO2MOINITOR_DEVICE=/dev/hidraw0 $GOPATH/bin/co2_exporter
+sudo CO2MONITOR_DEVICE=/dev/hidraw0 $GOPATH/bin/co2_exporter
 ```
 > [!NOTE]
 > Accessing HIDRAW devices typically requires root permissions.
