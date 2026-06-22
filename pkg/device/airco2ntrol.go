@@ -2,6 +2,7 @@ package device
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"io"
 	"os"
@@ -38,7 +39,8 @@ func New(path string) (AirController, error) {
 	//#nosec:G103 (CWE-242): Use of unsage calls should be audited
 	_, _, ep := syscall.Syscall(syscall.SYS_IOCTL, device.Fd(), uintptr(enableHidiocsFeature9), uintptr(unsafe.Pointer(&enableReportCode)))
 	if ep != 0 {
-		return AirController{}, fmt.Errorf("could not enable device to stream values: %w", device.Close())
+		err := device.Close()
+		return AirController{}, fmt.Errorf("could not enable device to stream values: %w", errors.Join(ep, err))
 	}
 
 	return AirController{
