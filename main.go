@@ -24,8 +24,8 @@ func main() {
 		DevicePath = "/dev/hidraw0"
 	}
 
-	ctx := context.Background()
-	defer ctx.Done()
+	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
 
 	logger := slog.New(slog.NewJSONHandler(os.Stdout, nil))
 	logger.
