@@ -67,7 +67,7 @@ After=network.target
 
 [Service]
 ExecStart=/usr/local/bin/co2_exporter
-Environment=CO2MOINITOR_DEVICE=/dev/hidraw0
+Environment=CO2MONITOR_DEVICE=/dev/hidraw0
 Restart=on-failure
 User=root
 
