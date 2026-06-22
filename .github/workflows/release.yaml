@@ -20,7 +20,8 @@ jobs:
     name: "🗜️ check Code..."
     runs-on: ubuntu-latest
     env:
-      GO11MODULE: on
+      GO111MODULE: on
+      GOTOOLCHAIN: auto
     strategy:
       fail-fast: true
       matrix:
