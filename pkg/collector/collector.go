@@ -35,17 +35,17 @@ func New() *Collector {
 		}, []string{labelOperation}),
 		carbonDioxide: prometheus.NewGaugeVec(prometheus.GaugeOpts{
 			Namespace: namespace,
-			Name:      "carbon_dioxide_total",
+			Name:      "carbon_dioxide",
 			Help:      "Total detected carbon dioxide in ppm of the sensor",
 		}, []string{labelUnit}),
 		temperature: prometheus.NewGaugeVec(prometheus.GaugeOpts{
 			Namespace: namespace,
-			Name:      "temperature_total",
+			Name:      "temperature",
 			Help:      "Total detected temperature of the sensor",
 		}, []string{labelUnit}),
 		humidity: prometheus.NewGaugeVec(prometheus.GaugeOpts{
 			Namespace: namespace,
-			Name:      "humidity_total",
+			Name:      "humidity",
 			Help:      "Total detected humidity of the sensor",
 		}, []string{labelUnit}),
 	}
