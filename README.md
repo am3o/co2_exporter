@@ -16,9 +16,9 @@ This exporter communicates with the device via the Linux HIDRAW interface (e.g.,
 
 | Metric Name                            | Type  | Labels | Unit     |
 |----------------------------------------|:-----:|:------:|----------|
-| `tfa_airco2ntrol_carbon_dioxide_total` | Gauge | `unit` | ppm      |
-| `tfa_airco2ntrol_temperature_total`    | Gauge | `unit` | °C       |
-| `tfa_airco2ntrol_humidity_total`       | Gauge | `unit` | percent  |
+| `tfa_airco2ntrol_carbon_dioxide` | Gauge | `unit` | ppm      |
+| `tfa_airco2ntrol_temperaturel`    | Gauge | `unit` | °C       |
+| `tfa_airco2ntrol_humidity`       | Gauge | `unit` | percent  |
 
 ---
 
